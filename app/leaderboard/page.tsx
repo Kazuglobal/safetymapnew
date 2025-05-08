@@ -6,7 +6,7 @@ export const metadata = {
 }
 
 export default async function LeaderboardPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   // セッション確認（未ログインならログインへ）
   const {

@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+   // Next.js の Image コンポーネントで外部ホストを許可
+   images: {
+     domains: ["ykodiivanzutyivkguza.supabase.co"],
+  },
   env: {
     // ── Supabase（サーバー側で使う） ─────────────────────
     SUPABASE_URL: 'https://ykodiivanzutyivkguza.supabase.co',
