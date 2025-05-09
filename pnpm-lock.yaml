@@ -99,8 +99,8 @@ importers:
         specifier: latest
         version: 2.49.4
       '@turf/turf':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.2.0
+        version: 7.2.0
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.3)
@@ -1359,6 +1359,9 @@ packages:
   '@turf/point-to-line-distance@7.2.0':
     resolution: {integrity: sha512-fB9Rdnb5w5+t76Gho2dYDkGe20eRrFk8CXi4v1+l1PC8YyLXO+x+l3TrtT8HzL/dVaZeepO6WUIsIw3ditTOPg==}
 
+  '@turf/point-to-polygon-distance@7.2.0':
+    resolution: {integrity: sha512-w+WYuINgTiFjoZemQwOaQSje/8Kq+uqJOynvx7+gleQPHyWQ3VtTodtV4LwzVzXz8Sf7Mngx1Jcp2SNai5CJYA==}
+
   '@turf/points-within-polygon@7.2.0':
     resolution: {integrity: sha512-jRKp8/mWNMzA+hKlQhxci97H5nOio9tp14R2SzpvkOt+cswxl+NqTEi1hDd2XetA7tjU0TSoNjEgVY8FfA0S6w==}
 
@@ -1443,8 +1446,8 @@ packages:
   '@turf/truncate@7.2.0':
     resolution: {integrity: sha512-jyFzxYbPugK4XjV5V/k6Xr3taBjjvo210IbPHJXw0Zh7Y6sF+hGxeRVtSuZ9VP/6oRyqAOHKUrze+OOkPqBgUg==}
 
-  '@turf/turf@7.0.0':
-    resolution: {integrity: sha512-oKtvIoP9nCBT7HCUn0/QP62QwTj8eDxfS810ZGJO0aDPDg2x94tSqwbvmu5WcvcxOBB/6L6rF55UJjL+OjcHxw==}
+  '@turf/turf@7.2.0':
+    resolution: {integrity: sha512-G1kKBu4hYgoNoRJgnpJohNuS7bLnoWHZ2G/4wUMym5xOSiYah6carzdTEsMoTsauyi7ilByWHx5UHwbjjCVcBw==}
 
   '@turf/union@7.2.0':
     resolution: {integrity: sha512-Xex/cfKSmH0RZRWSJl4RLlhSmEALVewywiEXcu0aIxNbuZGTcpNoI0h4oLFrE/fUd0iBGFg/EGLXRL3zTfpg6g==}
@@ -4290,6 +4293,17 @@ snapshots:
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
+  '@turf/point-to-polygon-distance@7.2.0':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.2.0
+      '@turf/helpers': 7.2.0
+      '@turf/invariant': 7.2.0
+      '@turf/meta': 7.2.0
+      '@turf/point-to-line-distance': 7.2.0
+      '@turf/polygon-to-line': 7.2.0
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
   '@turf/points-within-polygon@7.2.0':
     dependencies:
       '@turf/boolean-point-in-polygon': 7.2.0
@@ -4539,7 +4553,7 @@ snapshots:
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/turf@7.0.0':
+  '@turf/turf@7.2.0':
     dependencies:
       '@turf/along': 7.2.0
       '@turf/angle': 7.2.0
@@ -4622,6 +4636,7 @@ snapshots:
       '@turf/point-grid': 7.2.0
       '@turf/point-on-feature': 7.2.0
       '@turf/point-to-line-distance': 7.2.0
+      '@turf/point-to-polygon-distance': 7.2.0
       '@turf/points-within-polygon': 7.2.0
       '@turf/polygon-smooth': 7.2.0
       '@turf/polygon-tangents': 7.2.0
@@ -4653,6 +4668,7 @@ snapshots:
       '@turf/union': 7.2.0
       '@turf/unkink-polygon': 7.2.0
       '@turf/voronoi': 7.2.0
+      '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
   '@turf/union@7.2.0':
