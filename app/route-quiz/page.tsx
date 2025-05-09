@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import mapboxgl, { LngLatLike } from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
-// import * as turf from "@turf/turf" // FIXME: removed to avoid type issues
+// import * as turf from "@turf/turf" // 型問題回避のため個別 import に分割
 import { useSupabase } from "@/components/providers/supabase-provider"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { AlertTriangle, Car, HelpCircle, Shield, Map } from "lucide-react"
+import { AlertTriangle, Car, HelpCircle, Shield } from "lucide-react"
 import shuffle from "lodash.shuffle"
 import { addPoints } from "@/lib/gamification"
 import type { DangerReport } from "@/lib/types"
@@ -21,7 +21,10 @@ mapboxgl.accessToken = MAPBOX_TOKEN
 
 export default function RouteQuizPage() {
   const { supabase } = useSupabase()
+
+  /** Mapbox GL コンテナ */
   const mapContainer = useRef<HTMLDivElement>(null)
+  /** Mapbox GL インスタンス */
   const map = useRef<mapboxgl.Map | null>(null)
 
   const [hazards, setHazards] = useState<DangerReport[]>([])
@@ -33,20 +36,25 @@ export default function RouteQuizPage() {
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
 
-  // 初回: 危険レポート取得
+  /* ---------------------------------------------------------- */
+  /*  1. 危険レポート取得                                       */
+  /* ---------------------------------------------------------- */
   useEffect(() => {
     const fetchHazards = async () => {
-      const { data } = await supabase.from("danger_reports").select(
-        "id, latitude, longitude, danger_type"
-      )
+      const { data } = await supabase
+        .from("danger_reports")
+        .select("id, latitude, longitude, danger_type")
       setHazards((data as DangerReport[]) ?? [])
     }
     fetchHazards()
   }, [supabase])
 
-  // マップ初期化
+  /* ---------------------------------------------------------- */
+  /*  2. マップ初期化                                           */
+  /* ---------------------------------------------------------- */
   useEffect(() => {
     if (map.current || !mapContainer.current) return
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v12",
@@ -54,6 +62,7 @@ export default function RouteQuizPage() {
       zoom: 12,
     })
 
+    // クリックでスタートとゴール設定
     map.current.on("click", (e) => {
       const lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat]
       if (!startPt) {
@@ -64,32 +73,42 @@ export default function RouteQuizPage() {
     })
   }, [startPt, endPt])
 
-  // マーカー表示
+  /* ---------------------------------------------------------- */
+  /*  3. スタート / ゴールマーカー描画                          */
+  /* ---------------------------------------------------------- */
   useEffect(() => {
     if (!map.current) return
-    let style: any
+
+    let style: mapboxgl.Style | undefined
     try {
       style = map.current.getStyle()
     } catch {
-      return
+      return // style 未設定のタイミング
     }
-    // clear existing markers
-    ;(style.layers || []).forEach((l) => {
-      if (l.id.startsWith("marker-")) {
+
+    /* ---------- 既存マーカー削除 ---------- */
+    ;(style.layers ?? []).forEach((layer: mapboxgl.AnyLayer) => {
+      if (layer.id.startsWith("marker-")) {
         try {
-          map.current!.removeLayer(l.id)
-        } catch {}
+          map.current?.removeLayer(layer.id)
+        } catch {
+          /* レイヤーが存在しない場合は無視 */
+        }
       }
     })
-    ;(style.sources as any) &&
-      Object.keys(style.sources).forEach((s) => {
-        if (s.startsWith("marker-")) {
+
+    ;(style.sources ?? {}) &&
+      Object.keys(style.sources).forEach((srcKey) => {
+        if (srcKey.startsWith("marker-")) {
           try {
-            map.current!.removeSource(s)
-          } catch {}
+            map.current?.removeSource(srcKey)
+          } catch {
+            /* ソースが存在しない場合は無視 */
+          }
         }
       })
 
+    /* ---------- マーカー追加関数 ---------- */
     const addMarker = (pt: [number, number], id: string, color: string) => {
       map.current!.addSource(id, {
         type: "geojson",
@@ -103,9 +122,9 @@ export default function RouteQuizPage() {
                 coordinates: pt,
               },
               properties: {},
-            } as any,
+            },
           ],
-        },
+        } as GeoJSON.FeatureCollection,
       })
       map.current!.addLayer({
         id,
@@ -117,14 +136,18 @@ export default function RouteQuizPage() {
         },
       })
     }
-    if (startPt) addMarker(startPt, "marker-start", "#38bdf8")
-    if (endPt) addMarker(endPt, "marker-end", "#f87171")
+
+    if (startPt) addMarker(startPt, "marker-start", "#38bdf8") // 水色
+    if (endPt) addMarker(endPt, "marker-end", "#f87171") // 赤
   }, [startPt, endPt])
 
-  // ルート取得
+  /* ---------------------------------------------------------- */
+  /*  4. ルート取得                                             */
+  /* ---------------------------------------------------------- */
   useEffect(() => {
     const getRoute = async () => {
       if (!startPt || !endPt) return
+
       const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${startPt[0]},${startPt[1]};${endPt[0]},${endPt[1]}?geometries=geojson&access_token=${MAPBOX_TOKEN}`
       const res = await fetch(url)
       const data = await res.json()
@@ -135,24 +158,24 @@ export default function RouteQuizPage() {
     getRoute()
   }, [startPt, endPt])
 
-  // ルート描画 + クイズリスト生成
+  /* ---------------------------------------------------------- */
+  /*  5. ルート描画 & クイズリスト作成                          */
+  /* ---------------------------------------------------------- */
   useEffect(() => {
     if (!map.current || !routeLine) return
 
-    // remove prior route
-    if (map.current.getLayer("route-line")) {
-      map.current.removeLayer("route-line")
-    }
-    if (map.current.getSource("route")) {
-      map.current.removeSource("route")
-    }
+    // 既存ルート削除
+    if (map.current.getLayer("route-line")) map.current.removeLayer("route-line")
+    if (map.current.getSource("route")) map.current.removeSource("route")
+
+    // ルート描画
     map.current.addSource("route", {
       type: "geojson",
       data: {
         type: "Feature",
         geometry: routeLine,
         properties: {},
-      } as any,
+      } as GeoJSON.Feature,
     })
     map.current.addLayer({
       id: "route-line",
@@ -164,13 +187,17 @@ export default function RouteQuizPage() {
       },
     })
 
-    // フィット
-    const bounds = bbox(routeLine)
-    map.current.fitBounds([[bounds[0], bounds[1]], [bounds[2], bounds[3]]], {
-      padding: 40,
-    })
+    // ルートに合わせてズーム
+    const [minX, minY, maxX, maxY] = bbox(routeLine)
+    map.current.fitBounds(
+      [
+        [minX, minY],
+        [maxX, maxY],
+      ],
+      { padding: 40 },
+    )
 
-    // 50m バッファ
+    // 50 m バッファで近くの危険箇所抽出
     const buffered = bufferTurf(routeLine, 0.05, { units: "kilometers" })
     const near = hazards.filter((h) =>
       booleanPointInPolygon(turfPoint([h.longitude, h.latitude]), buffered),
@@ -178,8 +205,16 @@ export default function RouteQuizPage() {
     setQuizList(shuffle(near))
   }, [routeLine, hazards])
 
+  /* ---------------------------------------------------------- */
+  /*  6. クイズロジック                                         */
+  /* ---------------------------------------------------------- */
   const startQuiz = () => {
-    if (quizList.length === 0) return alert("ルート付近に危険箇所がありません！別ルートで試してください。")
+    if (quizList.length === 0) {
+      alert(
+        "ルート付近に危険箇所がありません！別ルートで試してください。",
+      )
+      return
+    }
     setStep("quiz")
   }
 
@@ -199,15 +234,20 @@ export default function RouteQuizPage() {
   const answer = async (choice: string) => {
     const current = quizList[idx]
     const correct = current.danger_type === choice
+
     if (correct) setScore((s) => s + 10)
-    if (idx + 1 === quizList.length) {
+
+    // 最終問題か判定
+    const isLast = idx + 1 === quizList.length
+    if (isLast) {
       setStep("result")
       // ポイント付与
       try {
         const {
           data: { user },
         } = await supabase.auth.getUser()
-        if (user) await addPoints(supabase, user.id, correct ? 10 : 0)
+        if (user)
+          await addPoints(supabase, user.id, correct ? 10 : 0)
       } catch (e) {
         console.error(e)
       }
@@ -216,53 +256,96 @@ export default function RouteQuizPage() {
     }
   }
 
-  // UI
+  /* ---------------------------------------------------------- */
+  /*  7. UI                                                     */
+  /* ---------------------------------------------------------- */
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-none p-2 bg-white border-b text-center font-bold">ルートクイズ</div>
-      <div className="flex-1 flex">
+    <div className="flex h-screen flex-col">
+      {/* ヘッダー */}
+      <header className="flex-none border-b bg-white p-2 text-center font-bold">
+        ルートクイズ
+      </header>
+
+      <div className="flex flex-1">
+        {/* Map */}
         <div ref={mapContainer} className="flex-1" />
+
         {/* サイドパネル */}
-        <div className="w-80 max-w-full border-l p-4 bg-white overflow-y-auto">
+        <aside className="w-80 max-w-full overflow-y-auto border-l bg-white p-4">
           {step === "select" && (
             <>
-              <h2 className="font-medium mb-2">スタート / ゴールを選択</h2>
-              <p className="text-sm mb-2">地図をクリックして 2 点を指定してください。</p>
-              <ul className="text-sm mb-4">
-                <li>スタート: {startPt ? `${startPt[1].toFixed(4)},${startPt[0].toFixed(4)}` : "未設定"}</li>
-                <li>ゴール: {endPt ? `${endPt[1].toFixed(4)},${endPt[0].toFixed(4)}` : "未設定"}</li>
+              <h2 className="mb-2 font-medium">スタート / ゴールを選択</h2>
+              <p className="mb-2 text-sm">
+                地図をクリックして 2&nbsp;点を指定してください。
+              </p>
+              <ul className="mb-4 text-sm">
+                <li>
+                  スタート:&nbsp;
+                  {startPt
+                    ? `${startPt[1].toFixed(4)},${startPt[0].toFixed(4)}`
+                    : "未設定"}
+                </li>
+                <li>
+                  ゴール:&nbsp;
+                  {endPt
+                    ? `${endPt[1].toFixed(4)},${endPt[0].toFixed(4)}`
+                    : "未設定"}
+                </li>
               </ul>
-              <Button onClick={startQuiz} disabled={!routeLine} className="w-full">クイズ開始</Button>
+              <Button
+                onClick={startQuiz}
+                disabled={!routeLine}
+                className="w-full"
+              >
+                クイズ開始
+              </Button>
             </>
           )}
+
           {step === "quiz" && (
             <>
-              <h2 className="font-medium mb-2">問題 {idx + 1} / {quizList.length}</h2>
-              <div className="flex justify-center mb-4">{hazardIcon(quizList[idx].danger_type)}</div>
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <h2 className="mb-2 font-medium">
+                問題 {idx + 1} / {quizList.length}
+              </h2>
+
+              <div className="mb-4 flex justify-center">
+                {hazardIcon(quizList[idx].danger_type)}
+              </div>
+
+              <div className="mb-4 grid grid-cols-2 gap-2">
                 {[
                   { label: "交通危険", value: "traffic" },
                   { label: "犯罪危険", value: "crime" },
                   { label: "災害危険", value: "disaster" },
                   { label: "その他", value: "other" },
                 ].map((opt) => (
-                  <Button key={opt.value} variant="outline" onClick={() => answer(opt.value)}>
+                  <Button
+                    key={opt.value}
+                    variant="outline"
+                    onClick={() => answer(opt.value)}
+                  >
                     {opt.label}
                   </Button>
                 ))}
               </div>
+
               <Progress value={((idx + 1) / quizList.length) * 100} />
             </>
           )}
+
           {step === "result" && (
             <>
-              <h2 className="font-medium mb-4">クイズ終了！</h2>
-              <p className="text-2xl font-bold text-center mb-4">{score} 点ゲット！</p>
-              <Button className="w-full" onClick={() => location.reload()}>もう一度遊ぶ</Button>
+              <h2 className="mb-4 font-medium">クイズ終了！</h2>
+              <p className="mb-4 text-center text-2xl font-bold">
+                {score} 点ゲット！
+              </p>
+              <Button className="w-full" onClick={() => location.reload()}>
+                もう一度遊ぶ
+              </Button>
             </>
           )}
-        </div>
+        </aside>
       </div>
     </div>
   )
-} 
+}
