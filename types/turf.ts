@@ -20,4 +20,10 @@ declare module "@turf/boolean-point-in-polygon" {
 
 declare module "@turf/helpers" {
   export function point(...args: any[]): any
+}
+
+declare module "@turf/turf" {
+  const turf: any
+  export default turf
+  export * from "@turf/helpers"
 } 
