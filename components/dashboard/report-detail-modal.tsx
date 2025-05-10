@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   Dialog,
   DialogContent,
@@ -19,10 +19,13 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
+  Upload,
+  Loader2,
 } from "lucide-react"
 import type { DangerReport } from "@/lib/types"
 import { formatDate } from "@/lib/utils"
 import { pgTextArrayToJs } from "@/lib/arrayLiteral"
+import { useToast } from "@/components/ui/use-toast"
 
 interface ReportDetailModalProps {
   isOpen: boolean
@@ -31,6 +34,7 @@ interface ReportDetailModalProps {
   onApprove: (reportId: string) => Promise<void>
   onReject: (reportId: string) => Promise<void>
   onResolve?: (reportId: string) => Promise<void>
+  onReportUpdate?: () => void // 報告が更新されたときに親コンポーネントに通知するコールバック
 }
 
 export default function ReportDetailModal({
@@ -40,9 +44,13 @@ export default function ReportDetailModal({
   onApprove,
   onReject,
   onResolve,
+  onReportUpdate,
 }: ReportDetailModalProps) {
   const [activeImageTab, setActiveImageTab] = useState<string>("original")
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { toast } = useToast()
 
   // useEffect の依存配列用に、report の有無を確認しつつ値を取得
   const reportImageUrl = report?.image_url;
@@ -63,6 +71,53 @@ export default function ReportDetailModal({
   // --- report が存在することが確定した後に、レンダリングに必要な値を計算 ---
   const processedUrls: string[] = report.processed_image_urls || [];
   const hasImages = !!report.image_url || processedUrls.length > 0;
+
+  // 加工画像アップロード処理
+  const handleProcessedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('reportId', report.id)
+
+      const response = await fetch('/api/image/process', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || '画像のアップロードに失敗しました')
+      }
+
+      const data = await response.json()
+      toast({
+        title: "加工画像をアップロードしました",
+        description: "加工画像が正常にアップロードされました。",
+      })
+
+      // 親コンポーネントに報告が更新されたことを通知
+      if (onReportUpdate) {
+        onReportUpdate()
+      }
+    } catch (error) {
+      console.error('画像アップロードエラー:', error)
+      toast({
+        title: "エラー",
+        description: error instanceof Error ? error.message : "画像のアップロードに失敗しました",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploading(false)
+      // ファイル入力をリセット
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
 
   const getDangerTypeLabel = (type: string) => {
     switch (type) {
@@ -240,6 +295,46 @@ export default function ReportDetailModal({
 
                     {/* 加工画像群 */}
                     <TabsContent value="processed" className="mt-2">
+                      {/* 加工画像アップロード部分 */}
+                      {report.status !== "rejected" && (
+                        <div className="mb-4 border-b border-gray-200 pb-4">
+                          <h4 className="text-sm font-medium mb-2">加工画像をアップロード</h4>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="file"
+                              id="processed-image"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleProcessedImageUpload}
+                              ref={fileInputRef}
+                              disabled={isUploading}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isUploading}
+                            >
+                              {isUploading ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  アップロード中...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  画像を選択
+                                </>
+                              )}
+                            </Button>
+                            <p className="text-xs text-gray-500">
+                              JPEG, PNG, GIF形式の画像（最大5MB）
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
                       {processedUrls.length > 0 ? (
                         <div className="flex gap-2 overflow-x-auto">
                           {processedUrls.map((url, idx) => (

@@ -69,7 +69,7 @@ export default function DashboardCharts({
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
                   data={statusData}
@@ -99,7 +99,7 @@ export default function DashboardCharts({
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
                   data={dangerTypeData}
@@ -137,7 +137,7 @@ export default function DashboardCharts({
             }}
             className="h-80"
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={320}>
               <BarChart data={dangerLevelData}>
                 <XAxis dataKey="name" />
                 <YAxis />

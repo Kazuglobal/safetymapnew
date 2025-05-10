@@ -6,15 +6,15 @@ export default async function DashboardPage() {
   const supabase = await createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   // Get user profile to check if admin
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single()
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
   if (!profile || profile.role !== "admin") {
     redirect("/")

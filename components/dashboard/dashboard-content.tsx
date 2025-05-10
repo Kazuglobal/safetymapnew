@@ -4,13 +4,37 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSupabase } from "@/components/providers/supabase-provider"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import type { DangerReport } from "@/lib/types"
 import { formatDate } from "@/lib/utils"
-import { ArrowLeft, CheckCircle, XCircle, Eye, ImageIcon } from "lucide-react"
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  Eye,
+  ImageIcon,
+} from "lucide-react"
 import DashboardCharts from "./dashboard-charts"
 import ReportDetailModal from "./report-detail-modal"
 
@@ -18,6 +42,7 @@ export default function DashboardContent() {
   const router = useRouter()
   const { supabase } = useSupabase()
   const { toast } = useToast()
+
   const [pendingReports, setPendingReports] = useState<DangerReport[]>([])
   const [approvedReports, setApprovedReports] = useState<DangerReport[]>([])
   const [resolvedReports, setResolvedReports] = useState<DangerReport[]>([])
@@ -25,81 +50,138 @@ export default function DashboardContent() {
   const [selectedReport, setSelectedReport] = useState<DangerReport | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      setIsLoading(true)
-      try {
-        // 審査中の報告を取得
-        const { data: pendingData, error: pendingError } = await supabase
-          .from("danger_reports")
-          .select("*")
-          .eq("status", "pending")
-          .order("created_at", { ascending: false })
+  /**
+   * --------------------------
+   *  フェッチ処理
+   * --------------------------
+   */
+  const fetchReports = async () => {
+    setIsLoading(true)
+    try {
+      /* 審査待ち */
+      const { data: pendingData, error: pendingError } = await supabase
+        .from("danger_reports")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
 
-        if (pendingError) {
-          console.error("Error fetching pending reports:", pendingError)
-          setPendingReports([])
-        } else {
-          setPendingReports(pendingData || [])
-        }
-
-        // 承認済みの報告を取得
-        const { data: approvedData, error: approvedError } = await supabase
-          .from("danger_reports")
-          .select("*")
-          .eq("status", "approved")
-          .order("created_at", { ascending: false })
-
-        if (approvedError) {
-          console.error("Error fetching approved reports:", approvedError)
-          setApprovedReports([])
-        } else {
-          setApprovedReports(approvedData || [])
-        }
-
-        // 解決済みの報告を取得
-        const { data: resolvedData, error: resolvedError } = await supabase
-          .from("danger_reports")
-          .select("*")
-          .eq("status", "resolved")
-          .order("created_at", { ascending: false })
-
-        if (resolvedError) {
-          console.error("Error fetching resolved reports:", resolvedError)
-          setResolvedReports([])
-        } else {
-          setResolvedReports(resolvedData || [])
-        }
-      } catch (error) {
-        console.error("Error in fetchReports:", error)
-        toast({
-          title: "エラー",
-          description: "データの取得中にエラーが発生しました。",
-          variant: "destructive",
-        })
-        // エラーが発生しても空の配列を設定して処理を続行
+      if (pendingError) {
+        console.error("Error fetching pending reports:", pendingError)
         setPendingReports([])
-        setApprovedReports([])
-        setResolvedReports([])
-      } finally {
-        setIsLoading(false)
+      } else {
+        setPendingReports(pendingData || [])
       }
-    }
 
+      /* 承認済み */
+      const { data: approvedData, error: approvedError } = await supabase
+        .from("danger_reports")
+        .select("*")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+
+      if (approvedError) {
+        console.error("Error fetching approved reports:", approvedError)
+        setApprovedReports([])
+      } else {
+        setApprovedReports(approvedData || [])
+      }
+
+      /* 解決済み */
+      const { data: resolvedData, error: resolvedError } = await supabase
+        .from("danger_reports")
+        .select("*")
+        .eq("status", "resolved")
+        .order("created_at", { ascending: false })
+
+      if (resolvedError) {
+        console.error("Error fetching resolved reports:", resolvedError)
+        setResolvedReports([])
+      } else {
+        setResolvedReports(resolvedData || [])
+      }
+    } catch (error) {
+      console.error("Error in fetchReports:", error)
+      toast({
+        title: "エラー",
+        description: "データの取得中にエラーが発生しました。",
+        variant: "destructive",
+      })
+      setPendingReports([])
+      setApprovedReports([])
+      setResolvedReports([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchReports()
   }, [supabase, toast])
 
+  // 報告詳細が更新されたときに最新データを取得するための処理
+  const handleReportUpdate = async () => {
+    // 選択中の報告がある場合、その最新データを取得
+    if (selectedReport) {
+      try {
+        const { data, error } = await supabase
+          .from("danger_reports")
+          .select("*")
+          .eq("id", selectedReport.id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching updated report:", error);
+          throw error;
+        }
+
+        if (data) {
+          // 選択中の報告を最新データで更新
+          setSelectedReport(data);
+
+          // リスト内の報告も更新
+          if (data.status === "pending") {
+            setPendingReports(pendingReports.map(r => 
+              r.id === data.id ? data : r
+            ));
+          } else if (data.status === "approved") {
+            setApprovedReports(approvedReports.map(r => 
+              r.id === data.id ? data : r
+            ));
+          } else if (data.status === "resolved") {
+            setResolvedReports(resolvedReports.map(r => 
+              r.id === data.id ? data : r
+            ));
+          }
+        }
+      } catch (error) {
+        console.error("Error updating report data:", error);
+        toast({
+          title: "エラー",
+          description: "報告データの更新中にエラーが発生しました。",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  /**
+   * --------------------------
+   *  アクションハンドラー
+   * --------------------------
+   */
   const handleApprove = async (reportId: string) => {
     try {
-      const { error } = await supabase.from("danger_reports").update({ status: "approved" }).eq("id", reportId)
+      const { error } = await supabase
+        .from("danger_reports")
+        .update({ status: "approved" })
+        .eq("id", reportId)
 
       if (error) throw error
 
-      // 状態を更新
-      const updatedReport = pendingReports.find((report) => report.id === reportId)
-      if (updatedReport) {
-        setPendingReports(pendingReports.filter((report) => report.id !== reportId))
-        setApprovedReports([{ ...updatedReport, status: "approved" }, ...approvedReports])
+      const updated = pendingReports.find((r) => r.id === reportId)
+      if (updated) {
+        setPendingReports(pendingReports.filter((r) => r.id !== reportId))
+        setApprovedReports([{ ...updated, status: "approved" }, ...approvedReports])
       }
 
       toast({
@@ -118,12 +200,14 @@ export default function DashboardContent() {
 
   const handleReject = async (reportId: string) => {
     try {
-      const { error } = await supabase.from("danger_reports").delete().eq("id", reportId)
+      const { error } = await supabase
+        .from("danger_reports")
+        .delete()
+        .eq("id", reportId)
 
       if (error) throw error
 
-      // 状態を更新
-      setPendingReports(pendingReports.filter((report) => report.id !== reportId))
+      setPendingReports(pendingReports.filter((r) => r.id !== reportId))
 
       toast({
         title: "拒否完了",
@@ -141,15 +225,17 @@ export default function DashboardContent() {
 
   const handleResolve = async (reportId: string) => {
     try {
-      const { error } = await supabase.from("danger_reports").update({ status: "resolved" }).eq("id", reportId)
+      const { error } = await supabase
+        .from("danger_reports")
+        .update({ status: "resolved" })
+        .eq("id", reportId)
 
       if (error) throw error
 
-      // 状態を更新
-      const updatedReport = approvedReports.find((report) => report.id === reportId)
-      if (updatedReport) {
-        setApprovedReports(approvedReports.filter((report) => report.id !== reportId))
-        setResolvedReports([{ ...updatedReport, status: "resolved" }, ...resolvedReports])
+      const updated = approvedReports.find((r) => r.id === reportId)
+      if (updated) {
+        setApprovedReports(approvedReports.filter((r) => r.id !== reportId))
+        setResolvedReports([{ ...updated, status: "resolved" }, ...resolvedReports])
       }
 
       toast({
@@ -171,6 +257,11 @@ export default function DashboardContent() {
     setIsDetailModalOpen(true)
   }
 
+  /**
+   * --------------------------
+   *  表示用ユーティリティ
+   * --------------------------
+   */
   const getDangerTypeLabel = (type: string) => {
     switch (type) {
       case "traffic":
@@ -186,12 +277,26 @@ export default function DashboardContent() {
     }
   }
 
+  /**
+   * `image_url` (単数) または `processed_image_urls` (複数) に
+   * 少なくとも 1 枚でも画像があるか判定
+   */
   const hasImages = (report: DangerReport) => {
-    return report.image_url || report.processed_image_url
+    if (report.image_url) return true
+    if (Array.isArray(report.processed_image_urls)) {
+      return report.processed_image_urls.length > 0
+    }
+    return false
   }
 
+  /**
+   * --------------------------
+   *  JSX
+   * --------------------------
+   */
   return (
     <div className="container mx-auto py-6 space-y-6">
+      {/* ヘッダー */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">管理ダッシュボード</h1>
         <Button variant="outline" onClick={() => router.push("/")}>
@@ -200,7 +305,9 @@ export default function DashboardContent() {
         </Button>
       </div>
 
+      {/* サマリーカード */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 審査待ち */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle>審査待ち</CardTitle>
@@ -211,6 +318,7 @@ export default function DashboardContent() {
           </CardContent>
         </Card>
 
+        {/* 承認済み */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle>承認済み</CardTitle>
@@ -221,6 +329,7 @@ export default function DashboardContent() {
           </CardContent>
         </Card>
 
+        {/* 解決済み */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle>解決済み</CardTitle>
@@ -232,20 +341,33 @@ export default function DashboardContent() {
         </Card>
       </div>
 
+      {/* チャート */}
       <DashboardCharts
         pendingCount={pendingReports.length}
         approvedCount={approvedReports.length}
         resolvedCount={resolvedReports.length}
-        allReports={[...pendingReports, ...approvedReports, ...resolvedReports]}
+        allReports={[
+          ...pendingReports,
+          ...approvedReports,
+          ...resolvedReports,
+        ]}
       />
 
+      {/* タブ */}
       <Tabs defaultValue="pending">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="pending">審査待ち ({pendingReports.length})</TabsTrigger>
-          <TabsTrigger value="approved">承認済み ({approvedReports.length})</TabsTrigger>
-          <TabsTrigger value="resolved">解決済み ({resolvedReports.length})</TabsTrigger>
+          <TabsTrigger value="pending">
+            審査待ち ({pendingReports.length})
+          </TabsTrigger>
+          <TabsTrigger value="approved">
+            承認済み ({approvedReports.length})
+          </TabsTrigger>
+          <TabsTrigger value="resolved">
+            解決済み ({resolvedReports.length})
+          </TabsTrigger>
         </TabsList>
 
+        {/* ---------- 審査待ち ---------- */}
         <TabsContent value="pending">
           <Card>
             <CardHeader>
@@ -254,7 +376,9 @@ export default function DashboardContent() {
             </CardHeader>
             <CardContent>
               {pendingReports.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">審査待ちの報告はありません</div>
+                <div className="text-center py-8 text-gray-500">
+                  審査待ちの報告はありません
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -270,8 +394,12 @@ export default function DashboardContent() {
                   <TableBody>
                     {pendingReports.map((report) => (
                       <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.title}</TableCell>
-                        <TableCell>{getDangerTypeLabel(report.danger_type)}</TableCell>
+                        <TableCell className="font-medium">
+                          {report.title}
+                        </TableCell>
+                        <TableCell>
+                          {getDangerTypeLabel(report.danger_type)}
+                        </TableCell>
                         <TableCell>{report.danger_level}</TableCell>
                         <TableCell>{formatDate(report.created_at)}</TableCell>
                         <TableCell>
@@ -283,15 +411,26 @@ export default function DashboardContent() {
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => handleViewDetails(report)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleViewDetails(report)}
+                            >
                               <Eye className="mr-1 h-4 w-4" />
                               詳細
                             </Button>
-                            <Button size="sm" onClick={() => handleApprove(report.id)}>
+                            <Button
+                              size="sm"
+                              onClick={() => handleApprove(report.id)}
+                            >
                               <CheckCircle className="mr-1 h-4 w-4" />
                               承認
                             </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleReject(report.id)}>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleReject(report.id)}
+                            >
                               <XCircle className="mr-1 h-4 w-4" />
                               拒否
                             </Button>
@@ -306,6 +445,7 @@ export default function DashboardContent() {
           </Card>
         </TabsContent>
 
+        {/* ---------- 承認済み ---------- */}
         <TabsContent value="approved">
           <Card>
             <CardHeader>
@@ -314,7 +454,9 @@ export default function DashboardContent() {
             </CardHeader>
             <CardContent>
               {approvedReports.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">承認済みの報告はありません</div>
+                <div className="text-center py-8 text-gray-500">
+                  承認済みの報告はありません
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -330,8 +472,12 @@ export default function DashboardContent() {
                   <TableBody>
                     {approvedReports.map((report) => (
                       <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.title}</TableCell>
-                        <TableCell>{getDangerTypeLabel(report.danger_type)}</TableCell>
+                        <TableCell className="font-medium">
+                          {report.title}
+                        </TableCell>
+                        <TableCell>
+                          {getDangerTypeLabel(report.danger_type)}
+                        </TableCell>
                         <TableCell>{report.danger_level}</TableCell>
                         <TableCell>{formatDate(report.created_at)}</TableCell>
                         <TableCell>
@@ -343,11 +489,19 @@ export default function DashboardContent() {
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => handleViewDetails(report)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleViewDetails(report)}
+                            >
                               <Eye className="mr-1 h-4 w-4" />
                               詳細
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => handleResolve(report.id)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResolve(report.id)}
+                            >
                               解決済み
                             </Button>
                           </div>
@@ -361,6 +515,7 @@ export default function DashboardContent() {
           </Card>
         </TabsContent>
 
+        {/* ---------- 解決済み ---------- */}
         <TabsContent value="resolved">
           <Card>
             <CardHeader>
@@ -369,7 +524,9 @@ export default function DashboardContent() {
             </CardHeader>
             <CardContent>
               {resolvedReports.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">解決済みの報告はありません</div>
+                <div className="text-center py-8 text-gray-500">
+                  解決済みの報告はありません
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -386,8 +543,12 @@ export default function DashboardContent() {
                   <TableBody>
                     {resolvedReports.map((report) => (
                       <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.title}</TableCell>
-                        <TableCell>{getDangerTypeLabel(report.danger_type)}</TableCell>
+                        <TableCell className="font-medium">
+                          {report.title}
+                        </TableCell>
+                        <TableCell>
+                          {getDangerTypeLabel(report.danger_type)}
+                        </TableCell>
                         <TableCell>{report.danger_level}</TableCell>
                         <TableCell>{formatDate(report.created_at)}</TableCell>
                         <TableCell>{formatDate(report.updated_at)}</TableCell>
@@ -399,7 +560,11 @@ export default function DashboardContent() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline" onClick={() => handleViewDetails(report)}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleViewDetails(report)}
+                          >
                             <Eye className="mr-1 h-4 w-4" />
                             詳細
                           </Button>
@@ -422,6 +587,7 @@ export default function DashboardContent() {
         onApprove={handleApprove}
         onReject={handleReject}
         onResolve={handleResolve}
+        onReportUpdate={handleReportUpdate}
       />
     </div>
   )
