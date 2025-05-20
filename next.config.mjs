@@ -4,6 +4,7 @@ const nextConfig = {
    images: {
      domains: ["ykodiivanzutyivkguza.supabase.co"],
   },
+  transpilePackages: ['mapbox-gl', 'react-map-gl'],
   env: {
     // ── Supabase（サーバー側で使う） ─────────────────────
     SUPABASE_URL: 'https://ykodiivanzutyivkguza.supabase.co',

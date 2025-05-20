@@ -4,21 +4,23 @@ const XROAD_API_BASE_URL = 'https://api.jartic-open-traffic.org/geoserver';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
+    const requestUrl = new URL(request.url);
     const externalApiUrl = new URL(XROAD_API_BASE_URL);
 
-    // クライアントからのクエリパラメータを外部APIのURLに追加
-    searchParams.forEach((value, key) => {
+    // クエリパラメータをそのまま転送する
+    requestUrl.searchParams.forEach((value, key) => {
       externalApiUrl.searchParams.append(key, value);
     });
+    console.log(`[XRoad Proxy] Forwarding params. Full query from client to proxy: ${requestUrl.search}`);
 
-    console.log(`[XRoad Proxy] Requesting to: ${externalApiUrl.toString()}`); // 送信するURLをログに出力
+    const finalExternalUrlString = externalApiUrl.toString();
+    // 外部APIへ送信する最終的なURL全体をログに出力
+    console.log(`[XRoad Proxy] Requesting to external API: ${finalExternalUrlString}`);
 
-    const response = await fetch(externalApiUrl.toString(), {
+    const response = await fetch(finalExternalUrlString, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // 必要に応じて他のヘッダーを追加
       },
     });
 

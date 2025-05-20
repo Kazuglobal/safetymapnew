@@ -24,6 +24,7 @@ export function SafeRouteSearch({
   const { current: map } = useMap();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [startMarker, setStartMarker] = useState<[number, number] | null>(startPoint || null);
   const [endMarker, setEndMarker] = useState<[number, number] | null>(endPoint || null);
   const [routeData, setRouteData] = useState<any>(null);
@@ -36,6 +37,7 @@ export function SafeRouteSearch({
 
     const fetchTrafficData = async () => {
       try {
+        setApiError(null);
         const bounds = map.getBounds();
         if (!bounds) return;
 
@@ -68,8 +70,24 @@ export function SafeRouteSearch({
           roadType
         );
         setTrafficData(data);
-      } catch (err) {
-        console.error('交通量データの取得に失敗しました:', err);
+      } catch (err: any) {
+        console.error('交通量データの取得に失敗しました (safe-route-search):', err);
+        let displayMessage = '交通量データの取得中に予期せぬエラーが発生しました。詳細についてはコンソールをご確認ください。';
+        
+        if (err instanceof xroadApi.XRoadAPIError) {
+          // XRoadAPIErrorの場合、statusに応じてメッセージを出し分ける
+          if (err.status === 400) {
+            displayMessage = `リクエストが無効です: ${err.message} パラメータを確認してください。`;
+          } else if (err.status === 500) {
+            displayMessage = `交通情報サーバーで内部エラーが発生しました: ${err.message} しばらくしてから再試行してください。`;
+          } else {
+            displayMessage = `交通情報APIエラー (コード: ${err.status}): ${err.message}`;
+          }
+        } else if (err instanceof Error) {
+          // getRoadData内のバリデーションエラーや、その他の一般的なエラー
+          displayMessage = err.message; 
+        }
+        setApiError(displayMessage);
       }
     };
 
@@ -222,7 +240,15 @@ export function SafeRouteSearch({
 
         {error && (
           <div className="text-sm text-red-600">
-            エラー: {error.message}
+            ルート計算エラー: {error.message}
+          </div>
+        )}
+
+        {apiError && (
+          <div className="mt-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+            <p className="font-semibold">交通情報エラー:</p>
+            <p>{apiError}</p>
+            <p className="text-xs mt-1">時間をおいて再試行するか、管理者に連絡してください。</p>
           </div>
         )}
 

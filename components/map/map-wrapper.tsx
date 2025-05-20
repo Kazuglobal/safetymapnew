@@ -2,8 +2,6 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import Map from 'react-map-gl';
-// JSX側も <Map ...> で使う
-
 import MapContainer from './map-container';
 
 interface MapWrapperProps {
@@ -39,7 +37,7 @@ export function MapWrapper({
   }
 
   return (
-    <MapGL
+    <Map
       mapboxAccessToken={mapToken}
       initialViewState={initialViewState || {
         longitude: 139.7530, // 東京を中心に表示
@@ -50,7 +48,7 @@ export function MapWrapper({
       mapStyle={mapStyle}
     >
       {children}
-    </MapGL>
+    </Map>
   );
 }
 
