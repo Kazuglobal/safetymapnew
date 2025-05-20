@@ -99,7 +99,7 @@ importers:
         specifier: latest
         version: 2.49.5
       '@turf/turf':
-        specifier: ^7.2.0
+        specifier: 7.2.0
         version: 7.2.0
       autoprefixer:
         specifier: ^10.4.20
