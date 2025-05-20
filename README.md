@@ -28,3 +28,45 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## xROAD API連携について
+
+### 設定方法
+
+1. [xROAD（道路データプラットフォーム）](https://www.xroad.mlit.go.jp/)にアクセスし、APIキーを取得してください。
+
+2. `.env.local`ファイルに以下の設定を追加してください：
+   ```
+   # xROAD API設定
+   NEXT_PUBLIC_XROAD_API_KEY=取得したAPIキー
+   ```
+
+3. 実装した機能を利用するには、以下のコンポーネントを使用します：
+   ```tsx
+   // 例：ページコンポーネント内での使用方法
+   import XRoadMapExample from '@/components/map/xroad-map-example';
+   
+   export default function XRoadPage() {
+     return (
+       <div>
+         <h1>道路データプラットフォーム連携マップ</h1>
+         <XRoadMapExample />
+       </div>
+     );
+   }
+   ```
+
+### 注意事項
+
+- 実際のAPIエンドポイントやパラメータは、xROADの公式APIドキュメントに従って調整してください。
+- APIの利用にはxROADの利用規約に従ってください。
+- 高頻度のAPIリクエストは制限される可能性があります。
+
+### カスタマイズ
+
+データの表示形式や視覚化方法を変更するには、以下のファイルを編集してください：
+
+- `lib/api/xroad.ts` - APIクライアント
+- `hooks/use-xroad-data.ts` - データ取得フック
+- `components/map/xroad-layer.tsx` - マップレイヤー
+- `components/map/xroad-map-example.tsx` - 使用例

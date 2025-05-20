@@ -15,54 +15,84 @@ export default function LandingPage() {
         transition={{ duration: 0.8 }}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              className="order-2 lg:order-1"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="mb-6 inline-flex items-center rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 ring-1 ring-inset ring-blue-700/20"
             >
-              防災・減災への新しいアプローチ
+              <div className="text-center lg:text-left">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  className="mb-6 inline-flex items-center rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 ring-1 ring-inset ring-blue-700/20"
+                >
+                  防災・減災への新しいアプローチ
+                </motion.div>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                  <span className="text-sky-600">Path</span>Guardian
+                </h1>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
+                  className="mt-4 text-xl font-semibold text-sky-700"
+                >
+                  🛡️「いつもの道」に潜む危険を見える化
+                </motion.div>
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="mt-6 text-base leading-8 text-gray-600"
+                >
+                  AI で通学路・通勤路のリスクをシミュレーション<br/>
+                  <span className="inline-block mt-2 text-sky-600 font-medium">📱 スマホで撮るだけ、防災・減災対策に！</span>
+                </motion.p>
+                
+                <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-y-4 sm:gap-y-0 sm:gap-x-6">
+                  <Link
+                    href="/register"
+                    className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
+                  >
+                    今すぐはじめる
+                  </Link>
+                  <Link href="#features" className="text-sm font-semibold leading-6 text-gray-900">
+                    機能を見る <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
             </motion.div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              <span className="text-sky-600">Path</span>Guardian
-            </h1>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-4 text-xl font-semibold text-sky-700"
+
+            {/* メインビジュアル */}
+            <motion.div 
+              className="order-1 lg:order-2 flex justify-center"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 1 }}
             >
-              🛡️「いつもの道」に潜む危険を見える化
+              <div className="relative w-full max-w-lg">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-2xl blur-xl opacity-75 animate-pulse"></div>
+                <Image
+                  src="/landing/images/safety-pattern.jpg"
+                  alt="PathGuardian - AIで通学路のリスクをシミュレーション"
+                  width={1200}
+                  height={800}
+                  className="relative w-full h-auto rounded-xl shadow-2xl ring-1 ring-gray-200 z-10"
+                  priority
+                />
+              </div>
             </motion.div>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="mt-6 text-base leading-8 text-gray-600"
-            >
-              AI で通学路・通勤路のリスクをシミュレーション<br/>
-              <span className="inline-block mt-2 text-sky-600 font-medium">📱 スマホで撮るだけ、防災・減災対策に！</span>
-            </motion.p>
-            
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-y-4 sm:gap-y-0 sm:gap-x-6">
-              <Link
-                href="/register"
-                className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
-              >
-                今すぐはじめる
-              </Link>
-              <Link href="#features" className="text-sm font-semibold leading-6 text-gray-900">
-                機能を見る <span aria-hidden="true">→</span>
-              </Link>
-            </div>
           </div>
-          {/* 背景イメージ */}
+
+          {/* マッププレビュー */}
           <motion.div 
-            className="relative mt-10 sm:mt-12 md:mt-24"
+            className="relative mt-20 sm:mt-24"
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 1 }}
+            transition={{ delay: 0.6, duration: 1 }}
           >
             <Image
               src="/landing/map-preview.png"

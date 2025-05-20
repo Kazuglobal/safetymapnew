@@ -1,3 +1,4 @@
+/// <reference types="@turf/turf" />
 "use client"
 
 import { useState, useEffect, useRef } from "react"
