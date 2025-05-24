@@ -22,7 +22,17 @@ export async function GET(request: NextRequest) {
       const longitude = parseFloat(searchParams.get('longitude') || '0');
       const radius = parseInt(searchParams.get('radius') || '1000');
       
-      const data = await getRoadData(latitude, longitude, radius);
+      // 現在時刻をdateTime形式で作成
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const dateTime = `${year}${month}${day}${hours}${minutes}`;
+      const roadType = '3'; // 一般国道をデフォルトとする
+      
+      const data = await getRoadData(latitude, longitude, radius, dateTime, roadType);
       return NextResponse.json(data);
     } 
     else if (method === 'getTrafficData') {

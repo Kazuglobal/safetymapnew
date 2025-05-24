@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Layer, Source } from 'react-map-gl';
+import { Layer, Source } from 'react-map-gl/mapbox';
 import { useXRoadData } from '@/hooks/use-xroad-data';
 
 interface XRoadLayerProps {

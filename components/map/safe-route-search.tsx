@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { Layer, Source, useMap } from 'react-map-gl';
+import { Button } from '@/components/ui/button';
+import { Layer, Source, useMap } from 'react-map-gl/mapbox';
 import mapboxgl from 'mapbox-gl';
 import * as xroadApi from '@/lib/api/xroad';
 

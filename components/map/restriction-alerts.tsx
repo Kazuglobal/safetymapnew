@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { AlertCircle, Bell, BellOff, Check, X, ExternalLink, MapPin } from 'lucide-react';
-import xroadApi from '@/lib/api/xroad';
+import * as xroadApi from '@/lib/api/xroad';
 
 interface RouteInfo {
   id: string;
@@ -66,7 +66,9 @@ export function RestrictionAlerts({
       
       // 各ルートの規制情報を取得
       for (const route of userRoutes) {
-        const restrictionData = await xroadApi.getRoadRestrictionData(route.bounds);
+        // getRoadRestrictionDataは未実装のため一時的にコメントアウト
+        // const restrictionData = await xroadApi.getRoadRestrictionData(route.bounds);
+        console.warn("規制情報の取得機能は現在開発中です");
         
         // デモデータの生成（実際のAPIの戻り値に合わせて調整）
         if (route.id === userRoutes[0].id) {

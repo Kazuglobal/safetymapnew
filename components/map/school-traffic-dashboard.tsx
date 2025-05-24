@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { Layer, Source, useMap } from 'react-map-gl';
-import xroadApi from '@/lib/api/xroad';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Layer, Source, useMap } from 'react-map-gl/mapbox';
+import * as xroadApi from '@/lib/api/xroad';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, Clock, MapPin, CircleAlert, Info } from 'lucide-react';
 
@@ -67,7 +68,24 @@ export function SchoolTrafficDashboard({
 
         // 交通量データと規制情報の取得
         if (showTrafficVolume) {
-          const trafficResult = await xroadApi.getRoadData(boundingBox);
+          // 中心点と現在時刻を用いてgetRoadDataを呼び出し
+          const [centerLon, centerLat] = schoolLocation;
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          const hours = String(now.getHours()).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          const currentDateTime = `${year}${month}${day}${hours}${minutes}`;
+          const roadType = '3'; // 一般国道をデフォルトとする
+
+          const trafficResult = await xroadApi.getRoadData(
+            centerLat,
+            centerLon,
+            radius,
+            currentDateTime,
+            roadType
+          );
           setTrafficData(trafficResult);
           
           // 交通量統計データの生成（デモ用）
@@ -89,8 +107,10 @@ export function SchoolTrafficDashboard({
         }
         
         if (showRestrictions) {
-          const restrictionResult = await xroadApi.getRoadRestrictionData(boundingBox);
-          setRestrictionData(restrictionResult);
+          // getRoadRestrictionDataは未実装のため一時的にコメントアウト
+          // const restrictionResult = await xroadApi.getRoadRestrictionData(boundingBox);
+          // setRestrictionData(restrictionResult);
+          console.warn("規制情報の取得機能は現在開発中です");
         }
 
         // マップを学校位置に移動
@@ -120,19 +140,19 @@ export function SchoolTrafficDashboard({
     }
   };
 
-  // 学校周辺の円形ポリゴンデータ
+  // 学校位置と半径をGeoJSONで表現
   const schoolRadiusData = {
-    type: 'FeatureCollection',
+    type: 'FeatureCollection' as const,
     features: [
       {
-        type: 'Feature',
+        type: 'Feature' as const,
         properties: {
           schoolId,
           schoolName,
           radius,
         },
         geometry: {
-          type: 'Point',
+          type: 'Point' as const,
           coordinates: schoolLocation,
         },
       },

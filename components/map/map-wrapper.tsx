@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, ReactNode } from 'react';
-import Map from 'react-map-gl';
+import Map from 'react-map-gl/mapbox';
 import MapContainer from './map-container';
 
 interface MapWrapperProps {

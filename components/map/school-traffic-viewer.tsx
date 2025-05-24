@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import MapGL, { Source, Layer, Popup, NavigationControl } from 'react-map-gl';
+import MapGL, { Source, Layer, Popup, NavigationControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -151,13 +151,13 @@ const SchoolTrafficViewer = ({
     if (!trafficData || !trafficData.features) return null;
     
     return {
-      type: 'FeatureCollection',
+      type: 'FeatureCollection' as const,
       features: trafficData.features
         .filter(feature => feature.properties.LATITUDE && feature.properties.LONGITUDE)
         .map(feature => ({
-          type: 'Feature',
+          type: 'Feature' as const,
           geometry: {
-            type: 'Point',
+            type: 'Point' as const,
             coordinates: [feature.properties.LONGITUDE, feature.properties.LATITUDE]
           },
           properties: {

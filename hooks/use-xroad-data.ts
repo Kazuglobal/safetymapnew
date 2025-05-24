@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMap } from 'react-map-gl';
+import { useMap } from 'react-map-gl/mapbox';
 import * as xroadApi from '@/lib/api/xroad';
 
 type XRoadDataType = 'roads' | 'traffic' | 'restrictions';
