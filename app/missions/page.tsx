@@ -30,7 +30,7 @@ export default function MissionsPage() {
           <div className="space-y-4">
             {filtered.map((m: any) => {
               const prog = progress[m.id]
-              const pct = prog ? (prog.progress / m.target_value) * 100 : 0
+              const pct = prog && prog.progress !== null ? (prog.progress / m.target_value) * 100 : 0
               const completed = prog?.completed
               return (
                 <div

@@ -3,8 +3,6 @@
  * xROADデータとユーザー報告を組み合わせて安全度を評価
  */
 
-import xroadApi from '@/lib/api/xroad';
-
 // 安全度スコアの重み付け係数
 const WEIGHT_TRAFFIC_VOLUME = 0.4; // 交通量の重み
 const WEIGHT_RESTRICTIONS = 0.2;   // 規制情報の重み

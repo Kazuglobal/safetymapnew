@@ -14,9 +14,9 @@ interface MissionRow {
 }
 
 interface ProgressRow {
-  mission_id: string
-  progress: number
-  completed: boolean
+  mission_id: number
+  progress: number | null
+  completed: boolean | null
 }
 
 export function useMissions() {
@@ -26,7 +26,7 @@ export function useMissions() {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return { missions: [], progress: {} as Record<string, ProgressRow> }
+    if (!user) return { missions: [], progress: {} as Record<number, ProgressRow> }
 
     const { data: missions } = await supabase
       .from("missions")
@@ -37,7 +37,7 @@ export function useMissions() {
       .select("mission_id, progress, completed")
       .eq("user_id", user.id)
 
-    const progressMap: Record<string, ProgressRow> = {}
+    const progressMap: Record<number, ProgressRow> = {}
     ;(progressRows ?? []).forEach((p) => {
       progressMap[p.mission_id] = p
     })
@@ -51,7 +51,7 @@ export function useMissions() {
 
   return {
     missions: data?.missions ?? [],
-    progress: data?.progress ?? {},
+    progress: data?.progress ?? ({} as Record<number, ProgressRow>),
     isLoading,
     error,
     mutate,

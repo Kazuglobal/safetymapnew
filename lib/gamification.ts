@@ -20,7 +20,10 @@ export async function addPoints(
     p_delta: delta,
   });
   if (error) throw error;
-  return data as { points: number; level: number };
+  
+  // RPCが配列を返す場合は最初の要素を取得、単一オブジェクトの場合はそのまま使用
+  const result = Array.isArray(data) ? data[0] : data;
+  return result as { points: number; level: number };
 }
 
 /** 条件を満たしたバッジを自動付与し、新たに付与したバッジ一覧を返す */
@@ -69,7 +72,7 @@ export async function checkBadges(
 export async function updateMissionProgress(
   supabase: SupabaseClient<Database>,
   userId: string,
-  missionId: string,
+  missionId: number,
   step = 1,
 ) {
   // 既存 progress 取得 or 0
@@ -93,7 +96,7 @@ export async function updateMissionProgress(
   const targetValue = mission?.target_value ?? 1;
 
   if (progressRow) {
-    newProgress = progressRow.progress + step;
+    newProgress = (progressRow.progress ?? 0) + step;
   }
 
   if (newProgress >= targetValue) {
@@ -125,7 +128,7 @@ export async function updateMissionProgress(
   if (completed && mission?.reward_badge_id) {
     await supabase.from("user_badges").upsert({
       user_id: userId,
-      badge_id: mission.reward_badge_id,
+      badge_id: Number(mission.reward_badge_id),
     });
   }
 

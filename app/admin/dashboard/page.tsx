@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
   const reportForDialog = (report: DangerReport) => ({
     id: report.id,
     originalImageUrl: report.image_url || "", // danger_reports.image_url を想定 (nullableなら空文字)
-    reportedAt: new Date(report.created_at).toLocaleString('ja-JP'),
+    reportedAt: report.created_at ? new Date(report.created_at).toLocaleString('ja-JP') : "不明",
   });
 
   if (isLoading) {
@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
             {reports.map((report) => (
               <TableRow key={report.id}>
                 <TableCell>
-                  {new Date(report.created_at).toLocaleString('ja-JP')}
+                  {report.created_at ? new Date(report.created_at).toLocaleString('ja-JP') : "不明"}
                 </TableCell>
                 <TableCell>
                   {/* @ts-ignore */}
