@@ -39,7 +39,7 @@ export default function LoginForm() {
         description: "アプリケーションにログインしました。",
       })
 
-      router.push("/")
+      router.push("/map")
       router.refresh()
     } catch (error: any) {
       toast({
@@ -70,7 +70,7 @@ export default function LoginForm() {
         description: "デモユーザーとしてログインしました。",
       })
 
-      router.push("/")
+      router.push("/map")
       router.refresh()
     } catch (error: any) {
       toast({

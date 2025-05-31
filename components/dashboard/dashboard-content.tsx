@@ -299,7 +299,7 @@ export default function DashboardContent() {
       {/* ヘッダー */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">管理ダッシュボード</h1>
-        <Button variant="outline" onClick={() => router.push("/")}>
+        <Button variant="outline" onClick={() => router.push("/map")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           マップに戻る
         </Button>

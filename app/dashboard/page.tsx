@@ -17,7 +17,7 @@ export default async function DashboardPage() {
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
   if (!profile || profile.role !== "admin") {
-    redirect("/")
+    redirect("/map")
   }
 
   return (
