@@ -3,8 +3,29 @@
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import { useSupabase } from "@/components/providers/supabase-provider"
+import { useEffect, useState } from "react"
 
 export default function LandingPage() {
+  const { supabase } = useSupabase()
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setIsLoggedIn(!!session)
+    }
+    
+    checkSession()
+    
+    // セッション変更を監視
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session)
+    })
+    
+    return () => subscription.unsubscribe()
+  }, [supabase])
+
   return (
     <>
       {/* Hero Section */}
@@ -53,12 +74,28 @@ export default function LandingPage() {
                 </motion.p>
                 
                 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-y-4 sm:gap-y-0 sm:gap-x-6">
-                  <Link
-                    href="/register"
-                    className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
-                  >
-                    今すぐはじめる
-                  </Link>
+                  {isLoggedIn === null ? (
+                    // ローディング中
+                    <div className="rounded-md bg-gray-400 px-6 py-3 text-sm font-semibold text-white w-full sm:w-auto">
+                      読み込み中...
+                    </div>
+                  ) : isLoggedIn ? (
+                    // ログイン済み
+                    <Link
+                      href="/map"
+                      className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
+                    >
+                      マップを見る
+                    </Link>
+                  ) : (
+                    // 未ログイン
+                    <Link
+                      href="/register"
+                      className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
+                    >
+                      今すぐはじめる
+                    </Link>
+                  )}
                   
                   <Link href="#features" className="text-sm font-semibold leading-6 text-gray-900">
                     機能を見る <span aria-hidden="true">→</span>
@@ -290,12 +327,28 @@ export default function LandingPage() {
             今すぐ無料で始めて、地域の安全づくりに参加しましょう。
           </p>
           <div className="mt-8 sm:mt-10 flex justify-center">
-            <Link
-              href="/register"
-              className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
-            >
-              無料アカウントを作成
-            </Link>
+            {isLoggedIn === null ? (
+              // ローディング中
+              <div className="w-full sm:w-auto rounded-md bg-gray-400/50 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white">
+                読み込み中...
+              </div>
+            ) : isLoggedIn ? (
+              // ログイン済み
+              <Link
+                href="/map"
+                className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
+              >
+                マップを見る
+              </Link>
+            ) : (
+              // 未ログイン
+              <Link
+                href="/register"
+                className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
+              >
+                無料アカウントを作成
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -307,6 +360,17 @@ export default function LandingPage() {
           <div className="mt-4 sm:mt-0 flex gap-x-6">
             <Link href="/terms" className="hover:text-gray-300">利用規約</Link>
             <Link href="/privacy" className="hover:text-gray-300">プライバシー</Link>
+            {isLoggedIn && (
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut()
+                  window.location.reload()
+                }}
+                className="hover:text-gray-300"
+              >
+                ログアウト
+              </button>
+            )}
           </div>
         </div>
       </footer>
