@@ -11,7 +11,7 @@ export default async function RegisterPage() {
   } = await supabase.auth.getSession()
 
   if (session) {
-    redirect("/")
+    redirect("/map")
   }
 
   return (
