@@ -3,17 +3,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
-  const router = useRouter()
-
-  const handleRegisterClick = () => {
-    console.log("代替ボタンがクリックされました")
-    router.push("/register")
-  }
-
   return (
     <>
       {/* Hero Section */}
@@ -65,21 +56,9 @@ export default function LandingPage() {
                   <Link
                     href="/register"
                     className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
-                    onClick={() => {
-                      console.log("今すぐはじめるボタンがクリックされました")
-                      console.log("リダイレクト先: /register")
-                    }}
                   >
                     今すぐはじめる
                   </Link>
-                  
-                  {/* 代替ボタン（デバッグ用） */}
-                  <Button 
-                    onClick={handleRegisterClick}
-                    className="bg-green-600 hover:bg-green-500 w-full sm:w-auto"
-                  >
-                    代替：アカウント作成
-                  </Button>
                   
                   <Link href="#features" className="text-sm font-semibold leading-6 text-gray-900">
                     機能を見る <span aria-hidden="true">→</span>
@@ -310,25 +289,13 @@ export default function LandingPage() {
           <p className="mt-4 sm:mt-6 text-base leading-7 text-sky-100 sm:text-lg">
             今すぐ無料で始めて、地域の安全づくりに参加しましょう。
           </p>
-          <div className="mt-8 sm:mt-10 flex justify-center gap-4">
+          <div className="mt-8 sm:mt-10 flex justify-center">
             <Link
               href="/register"
               className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
-              onClick={() => {
-                console.log("無料アカウント作成ボタンがクリックされました")
-                console.log("リダイレクト先: /register")
-              }}
             >
               無料アカウントを作成
             </Link>
-            
-            {/* 代替ボタン（デバッグ用） */}
-            <Button 
-              onClick={handleRegisterClick}
-              className="bg-green-500 hover:bg-green-400 text-white w-full sm:w-auto"
-            >
-              代替：登録
-            </Button>
           </div>
         </div>
       </section>
