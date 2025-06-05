@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { createServerClient } from "@/lib/supabase-server"
-import DashboardContent from "@/components/dashboard/dashboard-content"
+import CultureBridgeDashboard from "@/components/dashboard/culture-bridge-dashboard"
 
 export default async function DashboardPage() {
   const supabase = await createServerClient()
@@ -13,16 +13,21 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  // Get user profile to check if admin
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  // Get user profile from the existing profiles table
+  const { data: userProfile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single()
 
-  if (!profile || profile.role !== "admin") {
-    redirect("/map")
+  if (error || !userProfile) {
+    // If user profile doesn't exist, redirect to setup
+    redirect("/profile-setup")
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardContent />
+      <CultureBridgeDashboard user={userProfile} />
     </div>
   )
 }

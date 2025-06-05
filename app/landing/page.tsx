@@ -30,7 +30,7 @@ export default function LandingPage() {
     <>
       {/* Hero Section */}
       <motion.section
-        className="relative isolate overflow-hidden bg-gradient-to-br from-sky-50 to-white py-16 sm:py-24 md:py-32"
+        className="relative isolate overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 py-16 sm:py-24 md:py-32"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -48,20 +48,21 @@ export default function LandingPage() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  className="mb-6 inline-flex items-center rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 ring-1 ring-inset ring-blue-700/20"
+                  className="mb-6 inline-flex items-center rounded-full bg-indigo-100 px-4 py-1 text-sm font-medium text-indigo-800 ring-1 ring-inset ring-indigo-700/20"
                 >
-                  防災・減災への新しいアプローチ
+                  🌏 2025年7月28日-31日開催
                 </motion.div>
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                  <span className="text-sky-600">Path</span>Guardian
+                  <span className="text-indigo-600">Culture Bridge</span><br />
+                  Program 2025
                 </h1>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.8 }}
-                  className="mt-4 text-xl font-semibold text-sky-700"
+                  className="mt-4 text-xl font-semibold text-indigo-700"
                 >
-                  🛡️「いつもの道」に潜む危険を見える化
+                  🤝 高校生と留学生の国際交流プログラム
                 </motion.div>
                 <motion.p 
                   initial={{ opacity: 0 }}
@@ -69,8 +70,8 @@ export default function LandingPage() {
                   transition={{ delay: 0.5, duration: 0.8 }}
                   className="mt-6 text-base leading-8 text-gray-600"
                 >
-                  AI で通学路・通勤路のリスクをシミュレーション<br/>
-                  <span className="inline-block mt-2 text-sky-600 font-medium">📱 スマホで撮るだけ、防災・減災対策に！</span>
+                  4日間で世界とつながり、グローバルな視野を身につけよう！<br/>
+                  <span className="inline-block mt-2 text-indigo-600 font-medium">� 英語実践・文化交流・プレゼンテーション</span>
                 </motion.p>
                 
                 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-y-4 sm:gap-y-0 sm:gap-x-6">
@@ -82,23 +83,23 @@ export default function LandingPage() {
                   ) : isLoggedIn ? (
                     // ログイン済み
                     <Link
-                      href="/map"
-                      className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
+                      href="/dashboard"
+                      className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full sm:w-auto"
                     >
-                      マップを見る
+                      ダッシュボードを見る
                     </Link>
                   ) : (
                     // 未ログイン
                     <Link
                       href="/register"
-                      className="rounded-md bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 w-full sm:w-auto"
+                      className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full sm:w-auto"
                     >
-                      今すぐはじめる
+                      今すぐ参加申込
                     </Link>
                   )}
                   
                   <Link href="#features" className="text-sm font-semibold leading-6 text-gray-900">
-                    機能を見る <span aria-hidden="true">→</span>
+                    プログラム詳細 <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </div>
@@ -112,42 +113,54 @@ export default function LandingPage() {
               transition={{ delay: 0.3, duration: 1 }}
             >
               <div className="relative w-full max-w-lg">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-2xl blur-xl opacity-75 animate-pulse"></div>
-                <Image
-                  src="/landing/images/safety-pattern.jpg"
-                  alt="PathGuardian - AIで通学路のリスクをシミュレーション"
-                  width={1200}
-                  height={800}
-                  className="relative w-full h-auto rounded-xl shadow-2xl ring-1 ring-gray-200 z-10"
-                  priority
-                />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl blur-xl opacity-75 animate-pulse"></div>
+                <div className="relative bg-white rounded-xl shadow-2xl ring-1 ring-gray-200 z-10 p-8">
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">🌍</div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Global Connection</h3>
+                    <p className="text-gray-600">Experience cross-cultural communication and make international friends</p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
 
-          {/* マッププレビュー */}
+          {/* 開催概要 */}
           <motion.div 
-            className="relative mt-20 sm:mt-24"
+            className="relative mt-20 sm:mt-24 bg-white rounded-2xl shadow-xl ring-1 ring-gray-200 p-8"
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 1 }}
           >
-            <Image
-              src="/landing/map-preview.png"
-              alt="アプリのスクリーンショット"
-              width={1364}
-              height={866}
-              className="w-full rounded-xl shadow-xl ring-1 ring-gray-200"
-              priority
-            />
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-sky-600/30 to-transparent opacity-30"></div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-3xl mb-2">📅</div>
+                <div className="font-semibold text-gray-900">開催期間</div>
+                <div className="text-sm text-gray-600">2025年7月28日-31日</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">🏫</div>
+                <div className="font-semibold text-gray-900">対象</div>
+                <div className="text-sm text-gray-600">高校生・留学生</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">🌐</div>
+                <div className="font-semibold text-gray-900">形式</div>
+                <div className="text-sm text-gray-600">オンライン・実践型</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">🎓</div>
+                <div className="font-semibold text-gray-900">修了証</div>
+                <div className="text-sm text-gray-600">発行予定</div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Concept Section */}
+      {/* 4日間の特徴 */}
       <motion.section 
-        className="bg-gradient-to-b from-white to-sky-50 py-16 sm:py-20 md:py-28"
+        className="bg-gradient-to-b from-indigo-50 to-white py-16 sm:py-20 md:py-28"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -155,9 +168,9 @@ export default function LandingPage() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-sky-600">Concept</h2>
+            <h2 className="text-base font-semibold leading-7 text-indigo-600">4 Days Journey</h2>
             <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              普段の風景の向こうに見えるリスク
+              世界への扉を開く4日間
             </p>
             <motion.p 
               className="mt-4 sm:mt-6 text-base leading-7 text-gray-600"
@@ -166,31 +179,44 @@ export default function LandingPage() {
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
-              「みちのリスク可視化マップ」は、普段の風景をAIが分析。<br className="hidden sm:inline" />
-              地震・災害時に崩れそうな構造物をシミュレーションし、安心・安全を可視化します。
+              留学生との1対1交流から始まり、最終日には英語でプレゼンテーション。<br className="hidden sm:inline" />
+              段階的に国際感覚とコミュニケーション力を身につけます。
             </motion.p>
           </div>
           
-          <div className="mt-12 sm:mt-16 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 sm:mt-16 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                title: "AIリスクスキャン",
-                desc: "写真をAIが分析して危険度を5段階で評価。構造物の脆弱性をハイライト。",
-                color: "from-sky-400 to-blue-500",
+                day: "Day 1",
+                title: "文化交流・自己紹介",
+                desc: "留学生パートナーと出会い、お互いの文化について学びます。",
+                color: "from-blue-400 to-indigo-500",
+                icon: "🤝"
               },
               {
-                title: "災害シミュレーション",
-                desc: "地震・大雨・強風などの災害時に、どのような影響が出るかを可視化。",
-                color: "from-red-400 to-orange-500",
+                day: "Day 2", 
+                title: "英語実践・コミュニケーション",
+                desc: "実際の会話を通じて英語コミュニケーション力を向上させます。",
+                color: "from-indigo-400 to-purple-500",
+                icon: "💬"
               },
               {
-                title: "コミュニティの知恵",
-                desc: "地域の人々の報告やフィードバックを集約し、より精度の高いマップを実現。",
-                color: "from-emerald-400 to-green-500",
+                day: "Day 3",
+                title: "グローバル課題研究",
+                desc: "世界の課題について調べ、解決策をグループで議論します。",
+                color: "from-purple-400 to-pink-500", 
+                icon: "🌍"
+              },
+              {
+                day: "Day 4",
+                title: "最終プレゼンテーション",
+                desc: "学んだことを英語でプレゼンテーション。成果を発表します。",
+                color: "from-pink-400 to-red-500",
+                icon: "🎯"
               },
             ].map((item, i) => (
               <motion.div 
-                key={item.title}
+                key={item.day}
                 className="overflow-hidden rounded-lg bg-white shadow-lg"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -199,6 +225,10 @@ export default function LandingPage() {
               >
                 <div className={`h-2 bg-gradient-to-r ${item.color}`}></div>
                 <div className="p-5 sm:p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-2xl">{item.icon}</span>
+                    <span className="text-sm font-medium text-indigo-600">{item.day}</span>
+                  </div>
                   <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">{item.title}</h3>
                   <p className="mt-2 text-sm text-gray-600 sm:text-base">{item.desc}</p>
                 </div>
@@ -212,12 +242,12 @@ export default function LandingPage() {
       <section id="features" className="bg-white py-16 sm:py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-sky-600">Features</h2>
+            <h2 className="text-base font-semibold leading-7 text-indigo-600">Features</h2>
             <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              安全を守るための多彩な機能
+              充実したサポート機能
             </p>
             <p className="mt-4 sm:mt-6 text-base leading-7 text-gray-600">
-              危険箇所の報告からランキング、ポイント制まで、楽しみながら安全意識を高められます。
+              参加者一人ひとりの学習をサポートする様々な機能をご用意しています。
             </p>
           </div>
           <motion.div
@@ -232,34 +262,34 @@ export default function LandingPage() {
           >
             {[
               {
-                title: "危険箇所の報告",
-                desc: "写真や位置情報を添えてワンタップで報告。AI がリスクを自動解析。",
-                icon: "📍",
+                title: "個別ダッシュボード",
+                desc: "進捗状況、課題提出、フィードバックを一画面で確認。",
+                icon: "�",
               },
               {
-                title: "インタラクティブマップ",
-                desc: "報告がリアルタイムに反映される地図で一目で危険エリアを把握。",
-                icon: "🗺️",
+                title: "リアルタイムチャット",
+                desc: "グループメンバーや留学生とリアルタイムでコミュニケーション。",
+                icon: "�",
               },
               {
-                title: "ランキング＆バッジ",
-                desc: "安全活動への貢献度に応じてポイント・バッジを獲得。",
-                icon: "🏅",
+                title: "ワーク提出システム",
+                desc: "テキスト・画像・動画など多様な形式での課題提出が可能。",
+                icon: "📝",
               },
               {
-                title: "ダッシュボード",
-                desc: "通学路の統計や達成状況をビジュアルで確認。",
-                icon: "📊",
+                title: "AIサポート検索",
+                desc: "Gemini AIが学習リソースの検索をサポート。",
+                icon: "🤖",
               },
               {
-                title: "学校・自治体連携",
-                desc: "CSV エクスポートや API で行政の安全対策と連携可能。",
-                icon: "🏫",
+                title: "進捗トラッキング",
+                desc: "学習進捗を視覚的に確認、モチベーション維持をサポート。",
+                icon: "📈",
               },
               {
-                title: "モバイル最適化",
-                desc: "撮影・投稿・閲覧をスマホでスムーズに。PWA 対応。",
-                icon: "📱",
+                title: "多言語対応",
+                desc: "日本語・英語の切り替えで、より深い理解をサポート。",
+                icon: "🌐",
               },
             ].map((f) => (
               <motion.div
@@ -278,53 +308,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How to use Section */}
-      <section className="bg-gray-50 py-16 sm:py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-sky-600">How it works</h2>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              3 ステップで簡単スタート
-            </p>
-          </div>
-          <ol className="mt-10 sm:mt-16 space-y-8 sm:space-y-12 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:space-y-0">
-            {[
-              {
-                step: 1,
-                title: "無料登録",
-                desc: "メールアドレスまたは Google / LINE でサインアップ。",
-              },
-              {
-                step: 2,
-                title: "危険箇所を投稿",
-                desc: "撮影した写真と場所を選択して投稿。AI がリスク度を自動表示。",
-              },
-              {
-                step: 3,
-                title: "マップで共有",
-                desc: "地域の保護者・学校・自治体と情報を共有し、安全対策へ。",
-              },
-            ].map((item) => (
-              <li key={item.step} className="relative pl-14 sm:pl-16">
-                <span className="absolute left-0 top-0 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-sky-600 text-white text-base sm:text-lg font-bold">
-                  {item.step}
-                </span>
-                <h3 className="text-lg font-semibold leading-7 text-gray-900 sm:text-xl">{item.title}</h3>
-                <p className="mt-1 text-sm leading-6 text-gray-600 sm:mt-2 sm:text-base">{item.desc}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="bg-sky-600 py-16 sm:py-24 md:py-32">
+      <section className="bg-indigo-600 py-16 sm:py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
-            さあ、あなたの通学路をもっと安全に
+            世界とつながる第一歩を踏み出そう
           </h2>
-          <p className="mt-4 sm:mt-6 text-base leading-7 text-sky-100 sm:text-lg">
-            今すぐ無料で始めて、地域の安全づくりに参加しましょう。
+          <p className="mt-4 sm:mt-6 text-base leading-7 text-indigo-100 sm:text-lg">
+            Culture Bridge Program 2025で、新しい自分を発見しませんか？
           </p>
           <div className="mt-8 sm:mt-10 flex justify-center">
             {isLoggedIn === null ? (
@@ -335,10 +326,10 @@ export default function LandingPage() {
             ) : isLoggedIn ? (
               // ログイン済み
               <Link
-                href="/map"
+                href="/dashboard"
                 className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
               >
-                マップを見る
+                ダッシュボードへ
               </Link>
             ) : (
               // 未ログイン
@@ -346,7 +337,7 @@ export default function LandingPage() {
                 href="/register"
                 className="w-full sm:w-auto rounded-md bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-sm ring-1 ring-inset ring-white/30 backdrop-blur hover:bg-white/20"
               >
-                無料アカウントを作成
+                参加申込を開始
               </Link>
             )}
           </div>
@@ -356,10 +347,10 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-gray-900 py-8 sm:py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center text-gray-400 text-xs sm:text-sm">
-          <p>© 2025 通学路安全マップ. All rights reserved.</p>
+          <p>© 2025 Culture Bridge Program. All rights reserved.</p>
           <div className="mt-4 sm:mt-0 flex gap-x-6">
-            <Link href="/terms" className="hover:text-gray-300">利用規約</Link>
-            <Link href="/privacy" className="hover:text-gray-300">プライバシー</Link>
+            <Link href="/terms-of-service" className="hover:text-gray-300">利用規約</Link>
+            <Link href="/privacy-policy" className="hover:text-gray-300">プライバシーポリシー</Link>
             {isLoggedIn && (
               <button
                 onClick={async () => {
