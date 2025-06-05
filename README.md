@@ -1,72 +1,97 @@
-# なし
+# SafetySchoolMap - 学校安全マップ
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+学校周辺の安全性を視覚化し、危険箇所の報告・管理を行うWebアプリケーションです。
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/globalbunny77-gmailcoms-projects/v0--koujw6zjtpn)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/kOUJW6zJTPN)
+## 主な機能
 
-## Overview
+- **インタラクティブマップ**: Mapboxを使用した学校周辺の地図表示
+- **危険箇所報告**: ユーザーからの危険箇所の報告と画像アップロード
+- **安全スコア**: AI による安全性の評価とスコア表示
+- **リーダーボード**: 安全活動の貢献度ランキング
+- **管理ダッシュボード**: 管理者向けの報告管理機能
+- **ミッション機能**: ゲーミフィケーションによる参加促進
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+## 技術スタック
 
-## Deployment
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **UI Library**: Radix UI, Tailwind CSS
+- **Backend**: Supabase (データベース、認証、ストレージ)
+- **Map**: Mapbox GL JS, React Map GL
+- **AI**: OpenAI API (画像解析、安全性評価)
+- **API連携**: xROAD API (道路・交通データ)
 
-Your project is live at:
+## セットアップ
 
-**[https://vercel.com/globalbunny77-gmailcoms-projects/v0--koujw6zjtpn](https://vercel.com/globalbunny77-gmailcoms-projects/v0--koujw6zjtpn)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.dev/chat/projects/kOUJW6zJTPN](https://v0.dev/chat/projects/kOUJW6zJTPN)**
-
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
-
-## xROAD API連携について
-
-### 設定方法
-
-1. [xROAD（道路データプラットフォーム）](https://www.xroad.mlit.go.jp/)にアクセスし、APIキーを取得してください。
-
-2. `.env.local`ファイルに以下の設定を追加してください：
-   ```
-   # xROAD API設定
-   NEXT_PUBLIC_XROAD_API_KEY=取得したAPIキー
+1. リポジトリをクローン:
+   ```bash
+   git clone <repository-url>
+   cd safetyschoolmap
    ```
 
-3. 実装した機能を利用するには、以下のコンポーネントを使用します：
-   ```tsx
-   // 例：ページコンポーネント内での使用方法
-   import XRoadMapExample from '@/components/map/xroad-map-example';
+2. 依存関係をインストール:
+   ```bash
+   npm install
+   ```
+
+3. 環境変数を設定:
+   `.env.local`ファイルを作成し、以下の環境変数を設定してください：
+   ```env
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    
-   export default function XRoadPage() {
-     return (
-       <div>
-         <h1>道路データプラットフォーム連携マップ</h1>
-         <XRoadMapExample />
-       </div>
-     );
-   }
+   # Mapbox
+   NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token
+   
+   # OpenAI
+   OPENAI_API_KEY=your_openai_api_key
+   
+   # xROAD API
+   NEXT_PUBLIC_XROAD_API_KEY=your_xroad_api_key
    ```
 
-### 注意事項
+4. 開発サーバーを起動:
+   ```bash
+   npm run dev
+   ```
 
-- 実際のAPIエンドポイントやパラメータは、xROADの公式APIドキュメントに従って調整してください。
-- APIの利用にはxROADの利用規約に従ってください。
-- 高頻度のAPIリクエストは制限される可能性があります。
+## プロジェクト構造
 
-### カスタマイズ
+```
+/app              # Next.js App Router
+/components       # 再利用可能なReactコンポーネント
+/hooks           # カスタムReactフック
+/lib             # ユーティリティ関数とAPI
+/public          # 静的ファイル
+/supabase        # Supabaseマイグレーション
+/types           # TypeScript型定義
+```
 
-データの表示形式や視覚化方法を変更するには、以下のファイルを編集してください：
+## API連携
 
-- `lib/api/xroad.ts` - APIクライアント
-- `hooks/use-xroad-data.ts` - データ取得フック
-- `components/map/xroad-layer.tsx` - マップレイヤー
-- `components/map/xroad-map-example.tsx` - 使用例
+### xROAD API
+道路データプラットフォームとの連携により、道路情報や交通量データを取得できます。
+
+### Supabase
+ユーザー認証、データベース、ファイルストレージを提供します。
+
+### OpenAI API
+アップロードされた画像の解析と安全性評価に使用されます。
+
+## 開発
+
+```bash
+npm run dev      # 開発サーバー起動
+npm run build    # プロダクションビルド
+npm run start    # プロダクションサーバー起動
+npm run lint     # ESLintチェック
+```
+
+## デプロイ
+
+プロジェクトはVercelでのデプロイに最適化されています。
+
+## ライセンス
+
+MIT License
